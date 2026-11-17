@@ -1,0 +1,44 @@
+extends base
+
+block content
+  main.main
+    .user-view.admin-dashboard
+      nav.user-view__menu
+        h5.admin-dashboard__sidebar-title Admin Panel
+         ul.side-nav
+          li.side-nav--active
+            a(href='/admin') Dashboard
+          li
+            a(href='/admin/tours') Manage Tours
+          li
+            a(href='/admin/users') Manage Users
+          li
+            a(href='/admin/bookings') Manage Bookings
+          li
+            a(href='/admin/reviews') Manage Reviews
+
+      .user-view__content.admin-dashboard__content
+        .admin-dashboard__header
+          h2.heading-secondary Dashboard Overview
+          p.admin-dashboard__welcome Welcome to your administration panel.
+
+        .admin-dashboard__stats
+          .admin-stat-card
+            .admin-stat-card__label Total Tours
+            .admin-stat-card__number= stats.tours
+            .admin-stat-card__description Available tours
+
+          .admin-stat-card
+            .admin-stat-card__label Registered Users
+            .admin-stat-card__number= stats.users
+            .admin-stat-card__description Total accounts
+
+          .admin-stat-card
+            .admin-stat-card__label Total Bookings
+            .admin-stat-card__number= stats.bookings
+            .admin-stat-card__description Customer bookings
+
+          .admin-stat-card
+            .admin-stat-card__label Total Reviews
+            .admin-stat-card__number= stats.reviews
+            .admin-stat-card__description Customer feedback

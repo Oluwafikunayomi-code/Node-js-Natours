@@ -1,0 +1,40 @@
+extends base
+
+block content
+  main.main
+    .card-container
+      if bookings.length
+        each booking in bookings
+          .card
+            .card__header
+              .card__picture
+                .card__picture-overlay &nbsp;
+                img.card__picture-img(
+                  src=`/img/tours/${booking.tour.imageCover}`
+                  alt=booking.tour.name
+                )
+              h3.heading-tertirary
+                span= booking.tour.name
+
+            .card__details
+              h4.card__sub-heading Payment details
+
+              .card__data
+                svg.card__icon
+                  use(xlink:href='/img/icons.svg#icon-dollar-sign')
+                span= `$${booking.price}`
+
+              .card__data
+                svg.card__icon
+                  use(xlink:href='/img/icons.svg#icon-calendar')
+                span= booking.createdAt.toLocaleDateString()
+
+              .card__data
+                svg.card__icon
+                  use(xlink:href='/img/icons.svg#icon-check')
+                span= booking.paid ? 'Paid' : 'Pending'
+
+            .card__footer
+              a.btn.btn--green.btn--small(href=`/tour/${booking.tour.slug}`) View tour
+      else
+        h2.heading-secondary You have no booking history yet.

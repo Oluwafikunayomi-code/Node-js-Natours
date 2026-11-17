@@ -1,0 +1,36 @@
+extends base
+
+block content
+  main.main
+    .card-container
+      if reviews.length
+        each review in reviews
+          .card
+            .card__header
+              .card__picture
+                .card__picture-overlay &nbsp;
+                img.card__picture-img(
+                  src=`/img/tours/${review.tour.imageCover}`
+                  alt=review.tour.name
+                )
+              h3.heading-tertirary
+                span= review.tour.name
+
+            .card__details
+              h4.card__sub-heading Your review
+              p.card__text= review.review
+
+              .card__data
+                svg.card__icon
+                  use(xlink:href='/img/icons.svg#icon-star')
+                span= `${review.rating}/5`
+
+              .card__data
+                svg.card__icon
+                  use(xlink:href='/img/icons.svg#icon-calendar')
+                span= review.createdAt.toLocaleDateString()
+
+            .card__footer
+              a.btn.btn--green.btn--small(href=`/tour/${review.tour.slug}`) View tour
+      else
+        h2.heading-secondary You haven't written any reviews yet.

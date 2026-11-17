@@ -1,0 +1,36 @@
+extends base
+
+block content
+  main.main
+    .user-view.admin-dashboard
+      nav.user-view__menu
+        h5.admin-dashboard__sidebar-title Admin Panel
+        ul.side-nav
+          li
+            a(href='/admin') Dashboard
+          li
+            a(href='/admin/tours') Manage Tours
+          li
+            a(href='/admin/users') Manage Users
+          li
+            a(href='/admin/bookings') Manage Bookings
+          li.side-nav--active
+            a(href='/admin/reviews') Manage Reviews
+
+      .user-view__content.admin-dashboard__content
+        .admin-dashboard__header
+          h2.heading-secondary Manage Reviews
+          p.admin-dashboard__welcome View all customer reviews.
+
+        .admin-reviews
+          if reviews.length
+            each review in reviews
+              .admin-review
+                .admin-review__header
+                  h3= review.tour.name
+                  span.admin-review__rating #{review.rating}/5
+                p.admin-review__text= review.review
+                p.admin-review__customer Customer: #{review.user.name}
+                p.admin-review__date= review.createdAt.toDateString()
+          else
+            p No reviews found.

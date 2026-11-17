@@ -1,0 +1,37 @@
+extends base
+
+block content
+  main.main
+    .user-view.admin-dashboard
+      nav.user-view__menu
+        h5.admin-dashboard__sidebar-title Admin Panel
+        ul.side-nav
+          li
+            a(href='/admin') Dashboard
+          li
+            a(href='/admin/tours') Manage Tours
+          li
+            a(href='/admin/users') Manage Users
+          li.side-nav--active
+            a(href='/admin/bookings') Manage Bookings
+          li
+            a(href='/admin/reviews') Manage Reviews
+
+      .user-view__content.admin-dashboard__content
+        .admin-dashboard__header
+          h2.heading-secondary Manage Bookings
+          p.admin-dashboard__welcome View all customer bookings.
+
+        .admin-bookings
+          if bookings.length
+            each booking in bookings
+              .admin-booking
+                .admin-booking__details
+                  h3= booking.tour.name
+                  p Customer: #{booking.user.name}
+                  p Email: #{booking.user.email}
+                  p Price: $#{booking.price}
+                  p Payment: #{booking.paid ? 'Paid' : 'Unpaid'}
+                  p Booking Date: #{booking.createdAt.toDateString()}
+          else
+            p No bookings found.

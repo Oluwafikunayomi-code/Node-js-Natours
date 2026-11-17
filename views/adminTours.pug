@@ -1,0 +1,39 @@
+extends base
+
+block content
+  main.main
+    .user-view.admin-dashboard
+      nav.user-view__menu
+        h5.admin-dashboard__sidebar-title Admin Panel
+        ul.side-nav
+          li
+            a(href='/admin') Dashboard
+          li.side-nav--active
+            a(href='/admin/tours') Manage Tours
+          li
+            a(href='/admin/users') Manage Users
+          li
+            a(href='/admin/bookings') Manage Bookings
+          li
+            a(href='/admin/reviews') Manage Reviews
+
+      .user-view__content.admin-dashboard__content
+        .admin-dashboard__header
+          h2.heading-secondary Manage Tours
+          p.admin-dashboard__welcome View and manage all available tours.
+
+        .admin-tours
+          if tours.length
+            each tour in tours
+              .admin-tour
+                img.admin-tour__image(src=`/img/tours/${tour.imageCover}` alt=tour.name)
+                .admin-tour__details
+                  h3= tour.name
+                  p Duration: #{tour.duration} days
+                  p Price: $#{tour.price}
+                  a.btn.btn--small.btn--green(href=`/tour/${tour.slug}`) View Tour
+                  button.btn.btn--small.btn--red.btn--delete-tour(
+  data-tour-id=tour._id
+) Delete Tour
+          else
+            p No tours found.
