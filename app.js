@@ -1,4 +1,5 @@
 const path = require('path');
+const mongoose = require('mongoose');
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
@@ -42,6 +43,34 @@ app.options('*', cors());
 
 // Serving static files
 app.use(express.static(path.join(__dirname, 'public')));
+// Connect to MongoDB before handling requests
+let dbConnectionPromise;
+
+const connectDB = async () => {
+  if (mongoose.connection.readyState === 1) return;
+
+  if (mongoose.connection.readyState === 2) {
+    return mongoose.connection.asPromise();
+  }
+
+  if (!dbConnectionPromise) {
+    dbConnectionPromise = mongoose.connect(process.env.DATABASE).catch(err => {
+      dbConnectionPromise = null;
+      throw err;
+    });
+  }
+
+  return dbConnectionPromise;
+};
+
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
 
 // Set security HTTP headers
 app.use(helmet());

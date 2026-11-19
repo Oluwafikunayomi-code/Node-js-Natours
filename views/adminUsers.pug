@@ -27,7 +27,7 @@ block content
             each user in users
               .admin-user
                 .admin-user__info
-                  img.admin-user__photo(src=user.photo ? `/img/users/${user.photo}` : '/img/users/default.jpg' alt=user.name)
+                  img.admin-user__photo(src=user.photo ? (user.photo.startsWith('http') ? user.photo : `/img/users/${user.photo}`) : '/img/users/default.jpg' alt=user.name)
                   .admin-user__details
                     h3= user.name
                     p= user.email

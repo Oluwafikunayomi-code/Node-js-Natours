@@ -6,3 +6,5 @@ config.env
 .cache/
 .vscode/
 public/js/bundle.js.map
+.parcel-cache/
+*.map

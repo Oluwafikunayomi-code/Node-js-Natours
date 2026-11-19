@@ -26,7 +26,7 @@ block content
           if tours.length
             each tour in tours
               .admin-tour
-                img.admin-tour__image(src=`/img/tours/${tour.imageCover}` alt=tour.name)
+                img.admin-tour__image(src=tour.imageCover.startsWith('http') ? tour.imageCover : `/img/tours/${tour.imageCover}` alt=tour.name)
                 .admin-tour__details
                   h3= tour.name
                   p Duration: #{tour.duration} days

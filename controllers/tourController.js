@@ -1,11 +1,18 @@
 const multer = require('multer');
 const sharp = require('sharp');
+const cloudinary = require('cloudinary').v2;
 const Tour = require('./../models/tourModel');
 const catchAsync = require('./../utils/catchAsync');
 const factory = require('./handlerFactory');
 const AppError = require('./../utils/appError');
 
 const multerStorage = multer.memoryStorage();
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 const multerFilter = (req, file, cb) => {
   if (file.mimetype.startsWith('image')) {
@@ -31,29 +38,46 @@ exports.uploadTourImages = upload.fields([
 exports.resizeTourImages = catchAsync(async (req, res, next) => {
   if (!req.files.imageCover || !req.files.images) return next();
 
+  const uploadToCloudinary = async (buffer, publicId) => {
+    const processedBuffer = await sharp(buffer)
+      .resize(2000, 1333)
+      .toFormat('jpeg')
+      .jpeg({ quality: 90 })
+      .toBuffer();
+
+    return new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder: 'natours/tours',
+          public_id: publicId,
+          resource_type: 'image'
+        },
+        (error, result) => {
+          if (error) return reject(error);
+          resolve(result.secure_url);
+        }
+      );
+
+      uploadStream.end(processedBuffer);
+    });
+  };
+
+  const timestamp = Date.now();
+
   // 1) Cover image
-  req.body.imageCover = `tour-${req.params.id}-${Date.now()}-cover.jpeg`;
-  await sharp(req.files.imageCover[0].buffer)
-    .resize(2000, 1333)
-    .toFormat('jpeg')
-    .jpeg({ quality: 90 })
-    .toFile(`public/img/tours/${req.body.imageCover}`);
+  req.body.imageCover = await uploadToCloudinary(
+    req.files.imageCover[0].buffer,
+    `tour-${req.params.id}-${timestamp}-cover`
+  );
 
-  // 2) Images
-  req.body.images = [];
-
-  await Promise.all(
-    req.files.images.map(async (file, i) => {
-      const filename = `tour-${req.params.id}-${Date.now()}-${i + 1}.jpeg`;
-
-      await sharp(file.buffer)
-        .resize(2000, 1333)
-        .toFormat('jpeg')
-        .jpeg({ quality: 90 })
-        .toFile(`public/img/tours/${filename}`);
-
-      req.body.images.push(filename);
-    })
+  // 2) Gallery images
+  req.body.images = await Promise.all(
+    req.files.images.map((file, i) =>
+      uploadToCloudinary(
+        file.buffer,
+        `tour-${req.params.id}-${timestamp}-${i + 1}`
+      )
+    )
   );
 
   next();
