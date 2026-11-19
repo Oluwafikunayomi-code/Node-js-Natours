@@ -41,6 +41,12 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
 });
 
 const createBookingCheckout = async session => {
+  console.log('STRIPE SESSION:', {
+  id: session.id,
+  tour: session.client_reference_id,
+  email: session.customer_email,
+  amount: session.amount_total
+});
   const tour = session.client_reference_id;
 
   const user = await User.findOne({
